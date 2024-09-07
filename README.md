@@ -1,2 +1,2 @@
-# Rate-Limiter-Golang-
+# Rate-Limiter
 End to End rate limiter project
