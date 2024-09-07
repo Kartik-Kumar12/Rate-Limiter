@@ -37,7 +37,7 @@ func (bucket *TokenBucket) AllowRequest() bool {
 		bucket.tokens = float64(bucket.capacity)
 	}
 
-	// Greater than 1 because tokens var is float and > 0 becomes true and will the the next request
+	// Greater than 1 because tokens is float and > 0 becomes true and will the the next request
 	if bucket.tokens >= 1 {
 		bucket.tokens -= 1
 		return true
