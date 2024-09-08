@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	ratelimiter, err := ratelimiterFactory.GetRateLimiter("leaky")
+	ratelimiter, err := ratelimiterFactory.GetRateLimiter("fixed_window")
 	if err != nil {
 		log.Error().Msgf("Error creating ratelimiter instance %v", err)
 		return
@@ -24,4 +24,5 @@ func main() {
 		}
 		time.Sleep(200 * time.Millisecond)
 	}
+	ratelimiter.Stop()
 }

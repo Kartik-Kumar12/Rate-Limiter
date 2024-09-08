@@ -62,3 +62,7 @@ func (bucket *TokenBucket) AllowRequest() bool {
 
 	return false
 }
+
+func (bucket *TokenBucket) Stop() {
+
+}

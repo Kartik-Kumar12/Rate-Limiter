@@ -53,3 +53,7 @@ func (bucket *LeakyBucket) AllowRequest() bool {
 
 	return false
 }
+
+func (bucket *LeakyBucket) Stop() {
+
+}
