@@ -2,9 +2,10 @@ package algorithms
 
 import (
 	"context"
-	"fmt"
 	"sync"
 	"time"
+
+	"github.com/rs/zerolog/log"
 )
 
 type Window struct {
@@ -33,7 +34,7 @@ func resetWindow(ctx context.Context, window *Window) {
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Println("Window Resetting stopped")
+			log.Debug().Msg("Window resetting stopped --")
 			return
 		case <-ticker.C:
 			window.mu.Lock()
