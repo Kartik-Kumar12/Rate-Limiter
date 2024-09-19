@@ -34,23 +34,23 @@ func init() {
 	defaultStore = &Store{}
 }
 
-func WithConfigs(opts ...ConfigOption) {
+func WithConfigs(opts ...ConfigOption) error {
 	for _, opt := range opts {
 		opt(defaultStore)
 	}
 
 	// Check if Redis client is initialized
 	if defaultStore.client == nil {
-		log.Error().Msg("Redis client not provided during store initialization")
-		return
+		return fmt.Errorf("redis client not provided during store initialization")
 	}
+	return nil
 }
 
 func GetStore() *Store {
 	return defaultStore
 }
 
-func (s *Store) Eval(ctx context.Context, ipAddress string, capacity, refillRate int) (*int, error) {
+func (s *Store) Eval(ctx context.Context, ipAddress string, capacity float64, refillRate int64) (*int64, error) {
 
 	tokenKey := fmt.Sprintf("client_id.%s.tokens", ipAddress)
 	lastRefilledKey := fmt.Sprintf("client_id.%s.lastRefilled", ipAddress)
@@ -77,27 +77,15 @@ func (s *Store) Eval(ctx context.Context, ipAddress string, capacity, refillRate
 		return nil, fmt.Errorf("invalid result format")
 	}
 
-	tokenCount, ok := vals[0].(int)
+	tokenCount, ok := vals[0].(*int64)
 	if !ok {
 		return nil, fmt.Errorf("error parsing token count")
 	}
 
-	elapsedSeconds, ok := vals[1].(int)
-	if !ok {
-		return nil, fmt.Errorf("error parsing elapsed seconds")
-	}
-
-	tokensToAdd, ok := vals[2].(int)
-	if !ok {
-		return nil, fmt.Errorf("error parsing tokens to add")
-	}
-
 	log.Debug().
-		Int("tokenCount", tokenCount).
-		Int("elapsedSeconds", elapsedSeconds).
-		Int("tokensToAdd", tokensToAdd).
+		Int64("tokenCount", *tokenCount).
 		Str("ipAddress", ipAddress).
 		Msg("Successfully executed Redis Lua script")
 
-	return &tokenCount, nil
+	return tokenCount, nil
 }
