@@ -3,18 +3,13 @@ package http
 import (
 	"encoding/json"
 	"net/http"
-)
 
-type Message struct {
-	Status string `json:"status"`
-	Body   string `json:"body"`
-}
+	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/common"
+)
 
 func HandlerPing(w http.ResponseWriter, r *http.Request) {
 
-	// Business Logic
-
-	message := Message{
+	message := common.Message{
 		Status: "Successful",
 		Body:   "Hi! You've reached the API.",
 	}

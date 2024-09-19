@@ -50,7 +50,7 @@ func GetStore() *Store {
 	return defaultStore
 }
 
-func (s *Store) Eval(ctx context.Context, ipAddress string, capacity float64, refillRate int64) (*int64, error) {
+func (s *Store) Eval(ctx context.Context, ipAddress string, capacity float64, refillRate int64) (*float64, error) {
 
 	tokenKey := fmt.Sprintf("client_id.%s.tokens", ipAddress)
 	lastRefilledKey := fmt.Sprintf("client_id.%s.lastRefilled", ipAddress)
@@ -77,13 +77,13 @@ func (s *Store) Eval(ctx context.Context, ipAddress string, capacity float64, re
 		return nil, fmt.Errorf("invalid result format")
 	}
 
-	tokenCount, ok := vals[0].(*int64)
+	tokenCount, ok := vals[0].(*float64)
 	if !ok {
 		return nil, fmt.Errorf("error parsing token count")
 	}
 
 	log.Debug().
-		Int64("tokenCount", *tokenCount).
+		Float64("tokenCount", *tokenCount).
 		Str("ipAddress", ipAddress).
 		Msg("Successfully executed Redis Lua script")
 
