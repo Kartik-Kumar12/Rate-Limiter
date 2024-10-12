@@ -2,24 +2,24 @@
     "version": "0.2.0",
     "configurations": [
       {
-        "name": "Debug Client",               // Configuration for the client
+        "name": "Local Client",               // Configuration for the client
         "type": "go",
         "request": "launch",
         "mode": "auto",
-        "program": "${workspaceFolder}/rate_limiter/rate_limiter_system/client/cmd/main.go",  // Path to the client main file
+        "program": "${workspaceFolder}/rate_limiter_system/client/cmd",  // Path to the client main file
         "env": {},
         "args": [],
-        "cwd": "${workspaceFolder}/rate_limiter/rate_limiter_system/client"  // Set the working directory to the client folder
+        "cwd": "${workspaceFolder}/rate_limiter_system/client"  // Set the working directory to the client folder
       },
       {
-        "name": "Debug Server",               // Configuration for the server
+        "name": "Local Server",               // Configuration for the server
         "type": "go",
         "request": "launch",
         "mode": "auto",
-        "program": "${workspaceFolder}/rate_limiter/rate_limiter_system/server/cmd/main.go",  // Path to the server main file
+        "program": "${workspaceFolder}/rate_limiter_system/server/cmd",  // Path to the server main file
         "env": {},
         "args": [],
-        "cwd": "${workspaceFolder}/rate_limiter/rate_limiter_system/server"  // Set the working directory to the server folder
+        "cwd": "${workspaceFolder}/rate_limiter_system/server"  // Set the working directory to the server folder
       }
     ]
   }
