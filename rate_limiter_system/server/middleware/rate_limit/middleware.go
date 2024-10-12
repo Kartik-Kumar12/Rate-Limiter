@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	configFilePath = "../config.go"
+	configFilePath = "../config/ip_rate_config.json"
 )
 
 func MiddleWare(next func(w http.ResponseWriter, r *http.Request)) http.Handler {
