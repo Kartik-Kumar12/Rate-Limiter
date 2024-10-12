@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/common"
+	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/structs"
 )
 
 func HandlerPing(w http.ResponseWriter, r *http.Request) {
 
-	message := common.Message{
+	message := structs.Message{
 		Status: "Successful",
 		Body:   "Hi! You've reached the API.",
 	}

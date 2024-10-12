@@ -6,8 +6,8 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/common"
 	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/store/redis"
+	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/structs"
 	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/utils"
 )
 
@@ -25,7 +25,7 @@ func MiddleWare(next func(w http.ResponseWriter, r *http.Request)) http.Handler 
 			return
 		}
 
-		var config common.IPRateLimitMappingConfig
+		var config structs.IPRateLimitMappingConfig
 		if err := json.Unmarshal(configBytes, &config); err != nil {
 			log.Error().Err(err).Msg("Error Unmarshalling IP RateLimit Config")
 			http.Error(w, "Error in middleware", http.StatusInternalServerError)
@@ -60,7 +60,7 @@ func MiddleWare(next func(w http.ResponseWriter, r *http.Request)) http.Handler 
 		}
 
 		if !isAllowed {
-			message := common.Message{
+			message := structs.Message{
 				Status: "Request Failed",
 				Body:   "Too Many Request, try again later.",
 			}
