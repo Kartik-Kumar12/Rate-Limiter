@@ -6,9 +6,9 @@ import (
 
 	"github.com/rs/zerolog/log"
 
+	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/common/utils"
 	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/store/redis"
 	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/structs"
-	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/utils"
 )
 
 const (

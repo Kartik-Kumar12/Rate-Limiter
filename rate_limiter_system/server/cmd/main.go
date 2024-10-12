@@ -6,10 +6,10 @@ import (
 
 	"github.com/rs/zerolog/log"
 
+	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/common/utils"
 	httpHandler "github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/api/http"
 	ratelimiter "github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/middleware/rate_limit"
 	redisStore "github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/store/redis"
-	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/utils"
 	"github.com/go-redis/redis/v8"
 )
 
