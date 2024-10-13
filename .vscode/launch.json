@@ -9,7 +9,7 @@
         "program": "${workspaceFolder}/rate_limiter_system/client/cmd",  // Path to the client main file
         "env": {},
         "args": [],
-        "cwd": "${workspaceFolder}/rate_limiter_system/client"  // Set the working directory to the client folder
+        "cwd": "${workspaceFolder}/rate_limiter_system/client/cmd"  // Set the working directory to the client folder
       },
       {
         "name": "Local Server",               // Configuration for the server
@@ -19,7 +19,7 @@
         "program": "${workspaceFolder}/rate_limiter_system/server/cmd",  // Path to the server main file
         "env": {},
         "args": [],
-        "cwd": "${workspaceFolder}/rate_limiter_system/server"  // Set the working directory to the server folder
+        "cwd": "${workspaceFolder}/rate_limiter_system/server/cmd"  // Set the working directory to the server folder
       }
     ]
   }

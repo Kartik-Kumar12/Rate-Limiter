@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	IPConfigFileName = "config/ip_address.json"
+	IPConfigFileName = "../config/ip_address.json"
 )
 
 func makePingRequest(ip string) {

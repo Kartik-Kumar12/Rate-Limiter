@@ -6,6 +6,7 @@ import (
 
 	"github.com/rs/zerolog/log"
 
+	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/common/cli"
 	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/common/utils"
 	httpHandler "github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/api/http"
 	ratelimiter "github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/server/middleware/rate_limit"
@@ -19,7 +20,7 @@ const (
 
 func logServerStatus() {
 	for {
-		log.Print("Server is listening on port : 9000\n")
+		log.Info().Msg("Server is listening on port : 8080")
 		time.Sleep(2 * time.Second)
 	}
 }
@@ -47,13 +48,14 @@ func initStore() error {
 }
 func main() {
 
+	cli.SetLogger()
 	if err := initStore(); err != nil {
 		log.Error().Err(err).Msgf("error initializing store")
 		return
 	}
 	http.Handle("/ping", ratelimiter.MiddleWare(httpHandler.HandlerPing))
 	go logServerStatus()
-	err := http.ListenAndServeTLS(":8080", "", "", nil)
+	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Error().Err(err).Msgf("error listening on port :8080")
 	}

@@ -3,6 +3,7 @@ package redis
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -51,11 +52,10 @@ func GetStore() *Store {
 }
 
 func (s *Store) Eval(ctx context.Context, ipAddress string, capacity float64, refillRate int64) (*float64, error) {
-
 	tokenKey := fmt.Sprintf("client_id.%s.tokens", ipAddress)
 	lastRefilledKey := fmt.Sprintf("client_id.%s.lastRefilled", ipAddress)
 
-	// Execute the Lua script
+	// Execute the Lua script with capacity and refill rate as floats
 	cmd := s.client.Eval(ctx, s.script, []string{tokenKey, lastRefilledKey}, time.Now().Unix(), refillRate, capacity)
 
 	results, err := cmd.Result()
@@ -69,6 +69,7 @@ func (s *Store) Eval(ctx context.Context, ipAddress string, capacity float64, re
 		return nil, err
 	}
 
+	// Parse results from Lua script
 	vals, ok := results.([]interface{})
 	if !ok || len(vals) != 3 {
 		log.Error().
@@ -77,15 +78,21 @@ func (s *Store) Eval(ctx context.Context, ipAddress string, capacity float64, re
 		return nil, fmt.Errorf("invalid result format")
 	}
 
-	tokenCount, ok := vals[0].(*float64)
+	// Handle the token count as a float64 (from string)
+	tokenCountStr, ok := vals[0].(string)
 	if !ok {
-		return nil, fmt.Errorf("error parsing token count")
+		return nil, fmt.Errorf("error parsing token count as string")
+	}
+
+	tokenCount, err := strconv.ParseFloat(tokenCountStr, 64)
+	if err != nil {
+		return nil, fmt.Errorf("error converting token count to float64")
 	}
 
 	log.Debug().
-		Float64("tokenCount", *tokenCount).
+		Float64("tokenCount", tokenCount).
 		Str("ipAddress", ipAddress).
 		Msg("Successfully executed Redis Lua script")
 
-	return tokenCount, nil
+	return &tokenCount, nil
 }

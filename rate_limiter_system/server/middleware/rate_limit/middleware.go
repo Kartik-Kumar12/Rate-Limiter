@@ -33,18 +33,18 @@ func MiddleWare(next func(w http.ResponseWriter, r *http.Request)) http.Handler 
 		}
 
 		ipAddress := r.URL.Query().Get("ip")
-		log.Printf("Received request is from IPAddress : %v", ipAddress)
+		log.Info().Msgf("Received request is from IPAddress : %v", ipAddress)
 
 		var bucketCapacity float64
 		var refillRate int64
 
 		if limitsConfig, ok := config.IPRateLimits[ipAddress]; !ok || len(limitsConfig) != 2 {
 			log.Error().Msgf("Configuration for IP %s not found or is invalid.\n", ipAddress)
-			http.Error(w, "Error in rate limiter middleware", http.StatusInternalServerError)
+			http.Error(w, "IP not allowed", http.StatusForbidden)
 			return
 		} else {
 			bucketCapacity, refillRate = float64(limitsConfig[0]), limitsConfig[1]
-			log.Info().Msgf("Found configuration for IP %s - Bucket Size: %v, Refill Rate: %v\n", ipAddress, bucketCapacity, refillRate)
+			log.Info().Msgf("Found configuration for IP %s - Bucket Size: %v, Refill Rate: %v", ipAddress, bucketCapacity, refillRate)
 		}
 
 		// Method chaining pattern
@@ -57,6 +57,7 @@ func MiddleWare(next func(w http.ResponseWriter, r *http.Request)) http.Handler 
 		if err != nil {
 			log.Error().Msgf("Configuration for IP %s not found or is invalid.\n", ipAddress)
 			http.Error(w, "Error in rate limiter middleware", http.StatusInternalServerError)
+			return
 		}
 
 		if !isAllowed {
@@ -68,6 +69,7 @@ func MiddleWare(next func(w http.ResponseWriter, r *http.Request)) http.Handler 
 			w.WriteHeader(http.StatusTooManyRequests)
 			if err := json.NewEncoder(w).Encode(message); err != nil {
 				http.Error(w, "Failed to encode JSON", http.StatusInternalServerError)
+				return
 			}
 		}
 		next(w, r)
