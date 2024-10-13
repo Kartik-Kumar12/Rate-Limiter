@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"os"
+	"time"
 
 	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/client/services"
 	"github.com/Kartik-Kumar12/Rate-Limiter/rate_limiter_system/common/cli"
@@ -13,14 +15,14 @@ func main() {
 	cli.SetLogger()
 
 	// MAKE SEQUENTIAL REQUESTS
-	// for i := 0; i < 10; i++ {
-	// 	fmt.Printf("%vth iteration\n", i+1)
-	if err := services.ExecuteSequentially(); err != nil {
-		log.Error().Err(err).Msg("Failed to execute requests sequentially")
-		os.Exit(1)
+	for i := 0; i < 20; i++ {
+		fmt.Printf("%vth iteration\n", i+1)
+		if err := services.ExecuteSequentially(); err != nil {
+			log.Error().Err(err).Msg("Failed to execute requests sequentially")
+			os.Exit(1)
+		}
+		time.Sleep(200 * time.Millisecond)
 	}
-	// time.Sleep(200 * time.Millisecond)
-	// }
 
 	// MAKE PARALLEL REQUESTS
 	// for i := 0; i < 10; i++ {
