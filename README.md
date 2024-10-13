@@ -47,6 +47,7 @@ The Rate Limiter system is designed to control the rate of incoming requests fro
 - [Go](https://golang.org/doc/install) 1.17 or higher
 - Redis (version 6.x or higher)
 
+---
 ### Redis Setup
 
 To install and run Redis on your system:
@@ -59,6 +60,26 @@ redis-server
 
 Make sure Redis is running on `localhost:6379`.
 
+#### **Connecting to Redis Using `redis-cli`**
+
+To connect to the Redis server using `redis-cli`, run the following command:
+
+```bash
+redis-cli -h localhost -p 6379
+```
+
+If Redis is running on a different host or port, replace `localhost` and `6379` with the appropriate values.
+
+You can verify the connection by running:
+
+```bash
+PING
+```
+
+You should get a response: `PONG`.
+
+---
+
 ### Running the Server
 
 To start the server:
@@ -70,6 +91,8 @@ go run main.go
 
 The server will start and listen for incoming requests on port `8080`.
 
+---
+
 ### Running the Client
 
 To simulate sequential or concurrent requests from the client:
@@ -78,6 +101,10 @@ To simulate sequential or concurrent requests from the client:
 cd client/
 go run main.go
 ```
+
+---
+
+This now includes the brief steps for connecting to Redis using `redis-cli`. Let me know if you need any more updates!
 
 We can modify the client logic to send sequential or concurrent requests by editing `client/main.go`.
 
