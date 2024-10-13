@@ -12,6 +12,7 @@ The Rate Limiter system is designed to control the rate of incoming requests fro
 - [Running the System](#running-the-system)
 - [Key Components](#key-components)
 - [High-Level Workflow](#high-level-workflow)
+- [Token Bucket Algorithm Flow with Example Output](#token-bucket-algorithm-flow-with-example-output)
 - [Debugging with VSCode](#debugging-with-vscode)
 - [License](#license)
 
@@ -155,6 +156,106 @@ We can modify the client logic to send sequential or concurrent requests by edit
      - The **body message** that details whether the request was successful or rate-limited.
 
 
+## Token Bucket Algorithm Flow with Example Output
+
+The **Token Bucket** algorithm allows requests up to a certain capacity, refilling tokens at a fixed rate. Each request consumes one token, and requests are permitted as long as there are enough tokens available. If no tokens are available, the request is denied.
+
+### Example Configuration:
+- **Bucket Capacity**: 5 tokens
+- **Refill Rate**: 1 token per second
+
+### Example Output Breakdown:
+
+#### **Client Events:**
+The client makes several HTTP requests to the server's `/ping` endpoint. For each request, the client logs the server’s response:
+
+![Client Output](images/client.png)
+
+
+- **Requests 1 to 6**: The server responds with **200 OK**, meaning the request was allowed.
+- **Requests 7 to 10**: The server responds with **429 Too Many Requests**, indicating the rate limit was exceeded and the bucket was empty.
+
+#### **Server Events:**
+The server logs how it processes each request and manages tokens for the client’s IP. The server interacts with **Redis** to update and check the token count for the client's IP:
+
+![Server Output](images/server.png)
+
+
+- The server logs show the token count for each IP and whether the Lua script executed successfully to manage the tokens.
+- As the tokens are consumed, the **tokenCount** decreases until it reaches 0, after which the server starts rejecting requests.
+
+#### **Redis Events:**
+Redis stores the current token count and the last time tokens were refilled for each IP. The Redis output verifies the token consumption and refill:
+
+![Redis CLI Output](images/redis.png)
+
+
+The **Redis output** provides insight into how many tokens are left and when the tokens were last refilled.
+
+---
+
+### **Detailed Token Flow:**
+
+Here’s a step-by-step breakdown of token consumption and refill during the client-server interaction:
+
+1. **Request 1 at 31.532 seconds**:
+   - **Tokens before the request**: 5
+   - **Tokens added**: 0.0 (no refill since the last request)
+   - **Total tokens after addition**: 5.0
+   - **Tokens left after request**: 4.0 (1 token consumed)
+
+2. **Request 2 at 31.734 seconds**:
+   - **Tokens before the request**: 4
+   - **Tokens added**: 0.2 (slight refill due to elapsed time)
+   - **Total tokens after addition**: 4.2
+   - **Tokens left after request**: 3.2 (1 token consumed)
+
+3. **Request 3 at 32.739 seconds**:
+   - **Tokens before the request**: 3.2
+   - **Tokens added**: 0.8 (more time passed, more tokens refilled)
+   - **Total tokens after addition**: 4.0
+   - **Tokens left after request**: 3.0 (1 token consumed)
+
+4. **Request 4 at 32.739 seconds**:
+   - **Tokens before the request**: 3
+   - **Tokens added**: 0.2
+   - **Total tokens after addition**: 3.2
+   - **Tokens left after request**: 2.2
+
+5. **Request 7 at 33.739 seconds (Denied)**:
+   - **Tokens before the request**: 0.0
+   - **Tokens added**: 0.2
+   - **Total tokens after addition**: 0.2
+   - **Tokens left after request**: 0.2 (Request denied due to insufficient tokens)
+
+### **How the Components Work Together**:
+
+1. **Client**:
+   - Sends requests sequentially or concurrently to test the rate-limiting behavior.
+   - Receives a response indicating if the request was successful (200 OK) or rate-limited (429 Too Many Requests).
+   
+2. **Server**:
+   - Applies the **Token Bucket Algorithm** and interacts with Redis to check if there are enough tokens for the client's IP.
+   - Logs each request and token consumption to help track the rate-limiting status.
+   - Uses a Lua script to update the token count and last refill time atomically in Redis.
+
+3. **Redis**:
+   - Stores the current token count and last refill time for each IP.
+   - The **MGET** command allows inspecting the token count and refill time directly for verification purposes.
+   - Ensures that the server can check the token count in real-time and handle token consumption consistently across distributed instances.
+
+### **Verifying Redis Tokens and Refill Time**:
+
+To inspect the token count and last refill time, you can query Redis using:
+
+```bash
+MGET "client_id.<ip_address>.tokens" "client_id.<ip_address>.lastRefilled"
+```
+
+This will show the current token count and the last time tokens were refilled. By increasing the sleep time in the client program, you can observe the token refill in real-time as the client makes requests.
+
+
+
 ## Debugging with VSCode
 
 This project includes a `.vscode/launch.json` file for convenient debugging of both the client and server using VSCode.
@@ -198,6 +299,5 @@ To debug:
 3. Choose either the **Local Client** or **Local Server** configuration, and click "Start Debugging".
 
 ## License
-
 This project is open-source and available under the [MIT License](LICENSE).
 
