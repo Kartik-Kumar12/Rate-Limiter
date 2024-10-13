@@ -325,6 +325,15 @@ To debug:
 2. Navigate to the "Run and Debug" tab.
 3. Choose either the **Local Client** or **Local Server** configuration, and click "Start Debugging".
 
+### For More Low-Level Details
+
+For more detailed instructions on the low-level design and internal workings of the system, refer to the individual READMEs for the **client** and **server** packages:
+
+- [Client README](rate_limiter_system/client/README.md)
+- [Server README](rate_limiter_system/server/README.md)
+
+---
+
 ## License
 This project is open-source and available under the [MIT License](LICENSE).
 
